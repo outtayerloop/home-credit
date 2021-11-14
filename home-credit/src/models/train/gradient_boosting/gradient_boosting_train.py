@@ -29,16 +29,15 @@ from sklearn.ensemble import GradientBoostingClassifier
 # ## Importing the dataset
 
 # + id="vze1y0gl8rXd"
-train = pd.read_csv('../../../../data/processed/preprocessed_application_train.csv')
-X = train.iloc[:, :-1].values
-y = train.iloc[:, -1].values
-
-# + colab={"base_uri": "https://localhost:8080/"} id="IGUl82S04Q3t" outputId="a2adbb38-f263-419e-fe92-fe6884f3e253"
-train.shape
+df = pd.read_csv('../../../../data/processed/preprocessed_application_train.csv')
 
 # + id="CiDl6Nz0u_KG"
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+train, test = train_test_split(df)
+X_train = train.drop(["TARGET"], axis=1)
+X_test = test.drop(["TARGET"], axis=1)
+y_train = train[["TARGET"]]
+y_test = test[["TARGET"]]
 
 # + [markdown] id="OGC0rTyXp91A"
 # ## Adding MLFLow workflow
