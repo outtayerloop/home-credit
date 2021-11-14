@@ -23,6 +23,7 @@
 # + id="ksABrZmK8tWx"
 
 import pandas as pd
+from sklearn.ensemble import GradientBoostingClassifier
 
 # + [markdown] id="5HFfVPgE8FTy"
 # ## Importing the dataset
@@ -38,15 +39,6 @@ train.shape
 # + id="CiDl6Nz0u_KG"
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-
-# + [markdown] id="gls4kHR49jZ3"
-# ## Training the Gradient Boosting model on the training set
-
-# + id="bwIDRnnz9nz2"
-from sklearn.ensemble import GradientBoostingClassifier
-
-clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
-clf = clf.fit(X_train, y_train)
 
 # + [markdown] id="OGC0rTyXp91A"
 # ## Adding MLFLow workflow
@@ -79,7 +71,8 @@ with mlflow.start_run():
   clf_params = clf.get_params()
 
   for param in clf_params:
-    print(param)
+      param_value = clf_params[param]
+      mlflow.log_param(param, param_value)
 
   mlflow.log_metric('accuracy', accuracy)
   #mlflow.log_metric('conf_matrix', conf_matrix)
