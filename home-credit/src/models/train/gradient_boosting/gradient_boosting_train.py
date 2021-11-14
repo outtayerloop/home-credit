@@ -28,7 +28,7 @@ import pandas as pd
 # ## Importing the dataset
 
 # + id="vze1y0gl8rXd"
-train = pd.read_csv('./data/processed/preprocessed_application_train.csv')
+train = pd.read_csv('../../../../data/processed/preprocessed_application_train.csv')
 X = train.iloc[:, :-1].values
 y = train.iloc[:, -1].values
 
@@ -82,7 +82,7 @@ with mlflow.start_run():
     print(param)
 
   mlflow.log_metric('accuracy', accuracy)
-  mlflow.log_metric('conf_matrix', conf_matrix)
+  #mlflow.log_metric('conf_matrix', conf_matrix)
 
   mlflow_tracking_uri = mlflow.get_tracking_uri()
   print(mlflow_tracking_uri)

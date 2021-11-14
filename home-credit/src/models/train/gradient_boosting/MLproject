@@ -1,4 +1,4 @@
-name: cbw-mlflow
+name: gradient-boosting
 
 conda_env: conda.yaml
 
