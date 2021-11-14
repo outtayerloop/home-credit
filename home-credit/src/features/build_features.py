@@ -124,7 +124,7 @@ def impute_test_missing_data(test):
 
 
 # + [markdown] id="hAvaeTqpRlxf"
-# ### Get text features Na rows percentage
+# ### Getting text features Na rows percentage
 
 # + id="9LuAtXAyO4sQ"
 def get_train_na_percentages(train):
@@ -140,7 +140,7 @@ def get_train_na_percentages(train):
 
 
 # + [markdown] id="wFdGMgFhRt8R"
-# ### Drop text features Na rows
+# ### Dropping text features Na rows
 
 # + id="nxIcZ8luRwAC"
 def drop_textual_feat_na_rows(train, test):
@@ -303,7 +303,7 @@ def select_features_on_mod_proba(train, test):
 
 
 # + [markdown] id="-ag0L1nB6UsZ"
-# ## Preprocessed data export to CSV
+# ## Exporting preprocessed data to CSV files
 
 # + id="G2iGO7OO6X65"
 def export_dataframes_to_csv_files(train, test):
@@ -322,6 +322,7 @@ def export_dataframes_to_csv_files(train, test):
 
 # + id="TCTVgKVsCVsR" pycharm={"name": "#%%\n"}
 def build_features():
+    """Build feature and export train and test dataframes to CSVs"""
     (train, test) = get_dataframes()
     train = position_target_column(train)
     (train, test) = drop_id_column(train, test)
