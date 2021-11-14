@@ -34,10 +34,10 @@ df = pd.read_csv('../../../../data/processed/preprocessed_application_train.csv'
 # + id="CiDl6Nz0u_KG"
 from sklearn.model_selection import train_test_split
 train, test = train_test_split(df)
-X_train = train.drop(["TARGET"], axis=1)
-X_test = test.drop(["TARGET"], axis=1)
-y_train = train[["TARGET"]]
-y_test = test[["TARGET"]]
+X_train = train.drop(['TARGET'], axis=1)
+X_test = test.drop(['TARGET'], axis=1)
+y_train = train[['TARGET']]
+y_test = test[['TARGET']]
 
 # + [markdown] id="OGC0rTyXp91A"
 # ## Adding MLFLow workflow
