@@ -1,12 +1,15 @@
-import subprocess
-import requests
-from pyngrok import ngrok
+import mlflow
+import pandas as pd
+
 
 if __name__ == '__main__':
-    subprocess.run('mlflow models serve -m ./mlruns/0/b3544ea5fefe4efc8c94417fd58c0007/artifacts/model -p 1234', shell=True)
-    #subprocess.run('mlflow models serve -m ./mlruns/0/b3544ea5fefe4efc8c94417fd58c0007/artifacts/model -p 1234 &')
-    ngrok.kill()
-    ngrok.set_auth_token('')
-    ngrok_tunnel = ngrok.connect(addr='1234', proto='http', bind_tls=True)
-    print('MLflow Models Serve URL : ', ngrok_tunnel.public_url)
-    #system('mlflow models serve -m ./mlruns/0/b3544ea5fefe4efc8c94417fd58c0007/artifacts/model -p 1234')
+    truc = mlflow.search_runs(
+        filter_string = 'tags.model_name = \'GradientBoostingClassifier\'',
+        order_by=['attribute.start_time ASC']
+    )
+    gradient_boosting_train_latest_run_id = truc['run_id'].tail(1).values[0]
+    logged_gradient_boosting_model = 'runs:/' + gradient_boosting_train_latest_run_id + '/model'
+    loaded_radient_boosting_model = mlflow.pyfunc.load_model(logged_gradient_boosting_model)
+    test = pd.read_csv('./data/processed/processed_application_test.csv').head()
+    y_pred = loaded_radient_boosting_model.predict(test)
+    print(y_pred)

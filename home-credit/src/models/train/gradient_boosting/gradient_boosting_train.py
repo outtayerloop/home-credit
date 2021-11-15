@@ -143,6 +143,13 @@ def track_model_version(clf):
         mlflow.sklearn.log_model(clf, 'model')
 
 
+# + pycharm={"name": "#%%\n"}
+def set_mlflow_run_tags():
+    """Set current MLFlow run tags."""
+    tags = {'model_name': 'GradientBoostingClassifier'}
+    mlflow.set_tags(tags)
+
+
 # + id="e862b8bd"
 def train_and_track_model_in_mlflow():
     """Train model and track it with MLFLow"""
@@ -153,6 +160,7 @@ def train_and_track_model_in_mlflow():
         track_model_params(clf)
         track_model_metrics(clf, X_test, y_test)
         track_model_version(clf)
+        set_mlflow_run_tags()
 
 
 # + pycharm={"name": "#%%\n"}
