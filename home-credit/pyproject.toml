@@ -12,6 +12,7 @@ numpy = "^1.21.4"
 scikit-learn = "^1.0.1"
 mlflow = "^1.21.0"
 urllib3 = "^1.26.7"
+requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
 
