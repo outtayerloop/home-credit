@@ -1,6 +1,6 @@
 import sys
 
-from src.models.predict import gradient_boosting_predict as gbp
+from src.models import predict_model as pm
 
 
 def has_valid_args(args):
@@ -9,7 +9,6 @@ def has_valid_args(args):
     Keyword arguments:
     args -- arguments passed (program name skipped)
     """
-    truc = len(args) == 4
     return len(args) == 4 and not has_wrongly_positioned_args(args)
 
 
@@ -47,7 +46,7 @@ def get_model_prediction():
     if has_valid_args(args):
         model = args[1]
         file_path = args[3]
-        gbp.predict(model, file_path)
+        pm.predict(model, file_path)
     else:
         display_help()
 
