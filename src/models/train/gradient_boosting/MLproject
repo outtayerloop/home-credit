@@ -1,0 +1,7 @@
+name: gradient-boosting
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "python gradient_boosting_train.py"

@@ -1,0 +1,10 @@
+name: gradient-boosting
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.9,<3.11
+  - pandas==1.3.4
+  - numpy==1.21.4
+  - scikit-learn==1.0.1
+  - mlflow==1.21.0
+  - urllib3==1.26.7
