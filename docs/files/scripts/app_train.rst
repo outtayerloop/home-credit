@@ -1,4 +1,4 @@
-Training and tracking models with MLFlow
+Training and tracking models with MLflow
 ----------------------------------------
 
 To train and track models with MLFlow

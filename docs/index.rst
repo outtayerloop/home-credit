@@ -11,12 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   files/notebooks
-   files/src
-   files/app_train
-   files/app_predict
-   files/setup
-   files/test_environment
+   files/notebooks/notebook
+   files/scripts/script
+   files/source/src
+
 
 
 
