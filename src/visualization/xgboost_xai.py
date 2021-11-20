@@ -30,6 +30,6 @@ def get_fitted_model_shapley_values(fitted_xgb_model):
   fitted_xgb_model -- Fitted XGBoost model
   """
   explainer = shap.TreeExplainer(fitted_xgb_model)
-  data_for_prediction = pd.read_csv('./../../../data/processed/processed_application_test.csv')
+  data_for_prediction = pd.read_csv('./data/processed/processed_application_test.csv')
   shap_values = explainer.shap_values(data_for_prediction)
   return shap_values

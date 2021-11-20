@@ -9,7 +9,7 @@ def get_fit_mlflow_model(model):
     """
     max_acc_run_id = get_max_acc_model_run_id(model)
     logged_model = 'runs:/' + max_acc_run_id + '/model'
-    loaded_model = mlflow.pyfunc.load_model(logged_model)
+    loaded_model = mlflow.sklearn.load_model(logged_model)
     return loaded_model
 
 

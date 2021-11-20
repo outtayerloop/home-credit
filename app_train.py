@@ -7,10 +7,10 @@ from src.models import retrieve_fit_model as rfm
 def train_models():
     """Pre-process both train and test CSVs in data/external, save them in data/processed,
      train models and track them with MLFlow."""
-    bf.build_features()
-    subprocess.run('mlflow run ./src/models/train/gradient_boosting')
-    subprocess.run('mlflow run ./src/models/train/xgboost')
-    subprocess.run('mlflow run ./src/models/train/random_forest')
+    #bf.build_features()
+    #subprocess.run('mlflow run ./src/models/train/gradient_boosting')
+    #subprocess.run('mlflow run ./src/models/train/xgboost')
+    #subprocess.run('mlflow run ./src/models/train/random_forest')
     display_xgboost_model_shap_values()
 
 
