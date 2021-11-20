@@ -1,4 +1,4 @@
-name: gradient-boosting
+name: xgboost
 
 conda_env: conda.yaml
 

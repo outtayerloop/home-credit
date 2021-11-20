@@ -14,9 +14,6 @@
 # + [markdown] id="5ed90e31"
 # # XGboost model train
 
-# + colab={"base_uri": "https://localhost:8080/"} id="66MYnohHxorZ" outputId="2a9458b3-f47c-436d-edf6-48acfa7e8393"
-# !pip install mlflow
-
 # + id="a5013a5f"
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -34,7 +31,7 @@ import xgboost as xgb
 # + id="738f427f"
 def get_split_train_data():
   """Return a tuple containing split train data into X_train X_test, y_train and y_test."""
-  df = pd.read_csv('./preprocessed_application_train.csv')
+  df = pd.read_csv('../../../../data/processed/processed_application_train.csv')
   train, test = train_test_split(df)
   X_train = train.drop(['TARGET'], axis=1)
   X_test = test.drop(['TARGET'], axis=1)
@@ -61,7 +58,7 @@ def get_configured_logger():
 
 # + id="Jod5BBLEX0qJ"
 def train_xgboost_classifier(X_train, y_train):
-  """Return GradientBoostingClassifier fit on input ndarrays X_train and y_train.
+  """Return XGBClassifier fit on input ndarrays X_train and y_train.
 
   Keyword arguments:
   X_train -- ndarray containing all train columns except target column
@@ -141,7 +138,7 @@ def track_model_version(clf):
   """
   tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
   if tracking_url_type_store != 'file':
-      mlflow.sklearn.log_model(clf, 'model', registered_model_name='GradientBoostingClassifier')
+      mlflow.sklearn.log_model(clf, 'model', registered_model_name='XGBClassifier')
   else:
       mlflow.sklearn.log_model(clf, 'model')
 
@@ -149,7 +146,7 @@ def track_model_version(clf):
 # + pycharm={"name": "#%%\n"} id="bNg-yhC7uSeS"
 def set_mlflow_run_tags():
   """Set current MLFlow run tags."""
-  tags = {'model_name': 'XGBoostClassifier'}
+  tags = {'model_name': 'XGBClassifier'}
   mlflow.set_tags(tags)
 
 
