@@ -1,4 +1,4 @@
-name: xgboost
+name: random-forest
 channels:
   - conda-forge
 dependencies:
@@ -8,4 +8,3 @@ dependencies:
   - scikit-learn==1.0.1
   - mlflow==1.21.0
   - urllib3==1.26.7
-  - xgboost==1.5.0

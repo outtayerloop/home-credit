@@ -8,13 +8,13 @@
 #       jupytext_version: 1.13.1
 #   kernelspec:
 #     display_name: Python 3
+#     language: python
 #     name: python3
 # ---
 
-# + [markdown] id="5ed90e31"
-# # XGboost model train
+# # Random Forest model train
 
-# + id="a5013a5f"
+# + pycharm={"name": "#%%\n"}
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -22,13 +22,14 @@ from sklearn.metrics import confusion_matrix
 import logging
 import mlflow
 from urllib.parse import urlparse
-import xgboost as xgb
+from sklearn.ensemble import RandomForestClassifier
 
 
-# + [markdown] id="d1d6ca88"
+# -
+
 # ## Splitting dataset into train and test
 
-# + id="738f427f"
+# + pycharm={"name": "#%%\n"}
 def get_split_train_data():
   """Return a tuple containing split train data into X_train X_test, y_train and y_test."""
   df = pd.read_csv('../../../../data/processed/processed_application_train.csv')
@@ -40,39 +41,41 @@ def get_split_train_data():
   return X_train, X_test, y_train, y_test
 
 
-# + [markdown] id="931a8c69"
+# -
+
 # ## Adding MLFLow workflow
 
-# + [markdown] id="mXVizP3vXWdc"
 # ### Configuring logs
 
-# + id="ElavYC5wXOrF"
+# + pycharm={"name": "#%%\n"}
 def get_configured_logger():
   """Return a logger for console outputs configured to print warnings."""
   logging.basicConfig(level=logging.WARN)
   return logging.getLogger(__name__)
 
 
-# + [markdown] id="hFmZgG_hXvgi"
+# -
+
 # ### Training model on split data
 
-# + id="Jod5BBLEX0qJ"
-def train_xgboost_classifier(X_train, y_train):
-  """Return XGBClassifier fit on input ndarrays X_train and y_train.
+# + pycharm={"name": "#%%\n"}
+def train_random_forest_classifier(X_train, y_train):
+  """Return RandomForestClassifier fit on input ndarrays X_train and y_train.
 
   Keyword arguments:
   X_train -- ndarray containing all train columns except target column
   y_train -- ndarray target column values to train the model
   """
-  clf = xgb.XGBClassifier(objective ='binary:logistic', colsample_bytree = 0.3, learning_rate = 0.1,max_depth = 5, alpha = 10, n_estimators = 10)
+  clf = RandomForestClassifier(criterion='gini', n_estimators=300)
   clf = clf.fit(X_train, y_train)
   return clf
 
 
-# + [markdown] id="ZtpOwQmScTqs"
+# -
+
 # ### Getting model evaluation metrics
 
-# + id="30ac1411"
+# + pycharm={"name": "#%%\n"}
 def eval_metrics(actual, pred):
   """Return a tuple containing model classification accuracy and confusion matrix.
 
@@ -85,10 +88,10 @@ def eval_metrics(actual, pred):
   return accuracy, conf_matrix
 
 
-# + id="xlD2NDs7Yl52"
+# + pycharm={"name": "#%%\n"}
 def get_model_evaluation_metrics(clf, X_test, y_test):
   """Return a tuple containing model classification accuracy and confusion matrix.
-  
+
   Keyword arguments:
   clf -- classifier model
   X_test -- ndarray containing all test columns except target column
@@ -99,10 +102,11 @@ def get_model_evaluation_metrics(clf, X_test, y_test):
   return accuracy, conf_matrix
 
 
-# + [markdown] id="xIhVvhSMcbRN"
+# -
+
 # ### Tracking model on MLFLow
 
-# + id="o82vjjLVb1NC"
+# + pycharm={"name": "#%%\n"}
 def track_model_params(clf):
   """Log model params on MLFlow UI.
 
@@ -115,10 +119,10 @@ def track_model_params(clf):
       mlflow.log_param(param, param_value)
 
 
-# + id="bFudJAzUcjzI"
+# + pycharm={"name": "#%%\n"}
 def track_model_metrics(clf, X_test, y_test):
   """Log model metrics on MLFlow UI.
-  
+
   Keyword arguments:
   clf -- classifier model
   X_test -- ndarray containing all test columns except target column
@@ -129,7 +133,7 @@ def track_model_metrics(clf, X_test, y_test):
   #mlflow.log_metric('conf_matrix', conf_matrix)
 
 
-# + id="DpBgmHX9dXcv"
+# + pycharm={"name": "#%%\n"}
 def track_model_version(clf):
   """Version model on MLFlow UI.
 
@@ -138,24 +142,24 @@ def track_model_version(clf):
   """
   tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
   if tracking_url_type_store != 'file':
-      mlflow.sklearn.log_model(clf, 'model', registered_model_name='XGBClassifier')
+      mlflow.sklearn.log_model(clf, 'model', registered_model_name='RandomForestClassifier')
   else:
       mlflow.sklearn.log_model(clf, 'model')
 
 
-# + pycharm={"name": "#%%\n"} id="bNg-yhC7uSeS"
+# + pycharm={"name": "#%%\n"}
 def set_mlflow_run_tags():
   """Set current MLFlow run tags."""
-  tags = {'model_name': 'XGBClassifier'}
+  tags = {'model_name': 'RandomForestClassifier'}
   mlflow.set_tags(tags)
 
 
-# + id="e862b8bd"
+# + pycharm={"name": "#%%\n"}
 def train_and_track_model_in_mlflow():
   """Train model and track it with MLFLow"""
   (X_train, X_test, y_train, y_test) = get_split_train_data()
   logger = get_configured_logger()
-  clf = train_xgboost_classifier(X_train, y_train)
+  clf = train_random_forest_classifier(X_train, y_train)
   with mlflow.start_run():
     track_model_params(clf)
     track_model_metrics(clf, X_test, y_test)
@@ -163,6 +167,6 @@ def train_and_track_model_in_mlflow():
     set_mlflow_run_tags()
 
 
-# + pycharm={"name": "#%%\n"} colab={"base_uri": "https://localhost:8080/"} id="-e1kKCzVuSeT" outputId="66804a05-b021-43c8-db76-a249c2185edd"
+# + pycharm={"name": "#%%\n"}
 if __name__ == '__main__':
     train_and_track_model_in_mlflow()

@@ -46,6 +46,6 @@ def get_model_tag(model):
     if model == 'gb':
         return 'GradientBoostingClassifier'
     elif model == 'xgb':
-        return 'XGBoost'
+        return 'XGBClassifier'
     else:
-        return 'RandomForest'
+        return 'RandomForestClassifier'
