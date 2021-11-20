@@ -11,7 +11,8 @@ Welcome to home-credit documentation!
 
    project_presentation
    installation
-
+   getting-started
+   contributors
 
 
 
