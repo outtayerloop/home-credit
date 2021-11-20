@@ -6,8 +6,16 @@
 Welcome to home-credit documentation!
 ==============================================
 
-Contents:
+.. toctree::
+   :maxdepth: 2
 
+   project_presentation
+
+
+
+
+Content
+==================
 .. toctree::
    :maxdepth: 2
 
@@ -16,11 +24,3 @@ Contents:
    files/source/src
 
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

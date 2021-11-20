@@ -1,10 +1,10 @@
-Training and tracking models with MLflow
+Application training and tracking models
 ----------------------------------------
 
 To train and track models with MLFlow
 
 
-.. literalinclude:: ../../app_train.py
+.. literalinclude:: ../../../app_train.py
    :language: python
    :emphasize-lines: 5
    :linenos:

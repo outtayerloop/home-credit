@@ -4,6 +4,6 @@ Test environment
 Script for environment set up
 
 
-.. literalinclude:: ../../test_environment.py
+.. literalinclude:: ../../../test_environment.py
    :language: python
    :linenos:

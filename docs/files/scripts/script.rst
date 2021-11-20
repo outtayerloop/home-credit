@@ -1,7 +1,7 @@
 .. Here the index file for python global script,
-which are in top-level root directory
+   included train application, predict application and set up files
 
-Global scripts files
+Global application scripts
 ==============================================
 
 Contents:
