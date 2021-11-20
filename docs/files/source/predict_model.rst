@@ -6,4 +6,5 @@ Predicting models code
 
    gradient_boosting
    xgboost
+   random_forest
 
