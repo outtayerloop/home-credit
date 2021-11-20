@@ -88,7 +88,7 @@ def reorder_test_columns(train, test):
 # + id="m7aKDXPjF-C3"
 def impute_train_missing_data(train):
     """
-  Return tuple containing train dataframe with median imputed in place of missing numerical values 
+  Return tuple containing train dataframe with median imputed in place of missing numerical values
   and a Series with its numerical columns.
 
   Keyword arguments:
@@ -107,7 +107,7 @@ def impute_train_missing_data(train):
 # + id="bgQxbY5Mjef1"
 def impute_test_missing_data(test):
     """
-  Return tuple containing test dataframe with median imputed in place of missing numerical values 
+  Return tuple containing test dataframe with median imputed in place of missing numerical values
   and a Series with its numerical columns.
 
     Keyword arguments:
