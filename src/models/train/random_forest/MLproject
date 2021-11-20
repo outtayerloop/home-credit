@@ -1,0 +1,7 @@
+name: random-forest
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "python random_forest_train.py"

@@ -8,6 +8,7 @@ def train_models():
     bf.build_features()
     subprocess.run('mlflow run ./src/models/train/gradient_boosting')
     subprocess.run('mlflow run ./src/models/train/xgboost')
+    subprocess.run('mlflow run ./src/models/train/random_forest')
 
 
 if __name__ == '__main__':
