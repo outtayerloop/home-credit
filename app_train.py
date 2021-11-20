@@ -7,6 +7,7 @@ def train_models():
      train models and track them with MLFlow."""
     bf.build_features()
     subprocess.run('mlflow run ./src/models/train/gradient_boosting')
+    subprocess.run('mlflow run ./src/models/train/xgboost')
 
 
 if __name__ == '__main__':
