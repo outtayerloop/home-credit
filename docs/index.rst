@@ -10,6 +10,7 @@ Welcome to home-credit documentation!
    :maxdepth: 2
 
    project_presentation
+   installation
 
 
 
