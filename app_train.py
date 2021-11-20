@@ -14,6 +14,7 @@ def train_models():
 
 
 def display_xgboost_model_shap_values():
+    """Display fit XGBoost SHAP values."""
     fit_xgb = rfm.get_fit_mlflow_model('xgb')
     shap_values = xai.get_fitted_model_shapley_values(fit_xgb)
     print(shap_values)
