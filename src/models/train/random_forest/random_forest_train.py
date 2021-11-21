@@ -25,6 +25,7 @@ import logging
 import mlflow
 from urllib.parse import urlparse
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
 
 
 # -
@@ -68,7 +69,10 @@ def train_random_forest_classifier(X_train, y_train):
   X_train -- ndarray containing all train columns except target column
   y_train -- ndarray target column values to train the model
   """
-  clf = RandomForestClassifier(criterion='gini', n_estimators=300)
+  clf = RandomForestClassifier(class_weight='balanced', n_estimators=100, n_jobs=-1)
+  gs = GridSearchCV(clf, {"model__max_depth": [10, 15], "model__min_samples_split": [5, 10]}, n_jobs=-1, cv=5, scoring="accuracy")
+  gs.fit(X_train.values, y_train.values)
+  clf.set_params(**gs.best_params_)
   clf = clf.fit(X_train, y_train)
   return clf
 
