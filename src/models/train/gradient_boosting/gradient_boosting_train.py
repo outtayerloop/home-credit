@@ -19,6 +19,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
 import logging
 import mlflow
 from urllib.parse import urlparse
@@ -74,7 +76,7 @@ def train_gradient_boosting_classifier(X_train, y_train):
 
 # + id="30ac1411"
 def eval_metrics(actual, pred):
-    """Return a tuple containing model classification accuracy and confusion matrix.
+    """Return a tuple containing model classification accuracy, confusion matrix and f1_score.
 
   Keyword arguments:
   actual -- ndarray y_test containing true target values
@@ -82,12 +84,13 @@ def eval_metrics(actual, pred):
   """
     accuracy = accuracy_score(actual, pred)
     conf_matrix = confusion_matrix(actual, pred)
-    return accuracy, conf_matrix
+    f_score = f1_score(actual, pred)
+    return accuracy, conf_matrix, f_score
 
 
 # + id="xlD2NDs7Yl52"
 def get_model_evaluation_metrics(clf, X_test, y_test):
-    """Return a tuple containing model classification accuracy and confusion matrix.
+    """Return a tuple containing model classification accuracy, confusion matrix, f1_score and ROC area under the curve score.
   
   Keyword arguments:
   clf -- classifier model
@@ -95,8 +98,11 @@ def get_model_evaluation_metrics(clf, X_test, y_test):
   y_test -- ndarray target column values to test the model
   """
     predicted_repayments = clf.predict(X_test)
-    (accuracy, conf_matrix) = eval_metrics(y_test, predicted_repayments)
-    return accuracy, conf_matrix
+    (accuracy, conf_matrix, f_score) = eval_metrics(y_test, predicted_repayments)
+    gb_probs = clf.predict_proba(X_test)
+    gb_probs = gb_probs[:, 0] # keeping only the first class (repayment OK)
+    gb_roc_auc_score = roc_auc_score(y_test, gb_probs)
+    return accuracy, conf_matrix, f_score, gb_roc_auc_score
 
 
 # + [markdown] id="xIhVvhSMcbRN"
@@ -124,8 +130,10 @@ def track_model_metrics(clf, X_test, y_test):
   X_test -- ndarray containing all test columns except target column
   y_test -- ndarray target column values to test the model
   """
-    (accuracy, conf_matrix) = get_model_evaluation_metrics(clf, X_test, y_test)
+    (accuracy, conf_matrix, f_score, gb_roc_auc_score) = get_model_evaluation_metrics(clf, X_test, y_test)
     mlflow.log_metric('accuracy', accuracy)
+    mlflow.log_metric('f1_score', f_score)
+    mlflow.log_metric('roc_auc_score', gb_roc_auc_score)
     # mlflow.log_metric('conf_matrix', conf_matrix)
 
 
