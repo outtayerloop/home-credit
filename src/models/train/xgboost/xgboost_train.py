@@ -25,6 +25,7 @@ import logging
 import mlflow
 from urllib.parse import urlparse
 import xgboost as xgb
+from sklearn.model_selection import GridSearchCV
 
 
 # + [markdown] id="d1d6ca88"
@@ -66,7 +67,10 @@ def train_xgboost_classifier(X_train, y_train):
   X_train -- ndarray containing all train columns except target column
   y_train -- ndarray target column values to train the model
   """
-  clf = xgb.XGBClassifier(objective ='binary:logistic', colsample_bytree = 0.3, learning_rate = 0.1,max_depth = 5, alpha = 10, n_estimators = 10)
+  clf = xgb.XGBClassifier(scale_pos_weight=(1 - y_train.values.mean()), n_jobs=-1)
+  gs = GridSearchCV(clf, {'model__max_depth': [5, 10], 'model__min_child_weight': [5, 10], 'model__n_estimators': [25]}, n_jobs=-1, cv=5, scoring='accuracy')
+  gs.fit(X_train.values, y_train.values)
+  clf.set_params(**gs.best_params_)
   clf = clf.fit(X_train, y_train)
   return clf
 

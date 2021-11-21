@@ -209,17 +209,44 @@ def label_encode_test(test, txt_indexes_test):
 
 
 # + id="eUpCP9FC42fJ"
-def label_encode_dataframes(train, test, txt_indexes_train, txt_indexes_test):
-    """Return a tuple containing label-encoded train and test dataframes.
+def one_hot_encode_train(train, txt_indexes_train):
+  """Return the train dataframe with one-hot-encoded textual features.
 
   Keyword arguments:
   train -- the train dataframe
-  test -- the test dataframe
   txt_indexes_train -- ndarray of train textual column indexes
+  """
+  train_dummies = pd.get_dummies(train.iloc[:, txt_indexes_train])
+  train.drop(train.select_dtypes('object').columns, axis=1, inplace=True)
+  train = pd.concat([train, train_dummies], axis=1)
+  train = position_target_column(train)
+  return train
+
+
+def one_hot_encode_test(test, txt_indexes_test):
+  """Return the test dataframe with label-encoded textual features.
+
+  Keyword arguments:
+  test -- the test dataframe
   txt_indexes_test -- ndarray of test textual column indexes
   """
-    train = label_encode_train(train, txt_indexes_train)
-    test = label_encode_test(test, txt_indexes_test)
+  test_dummies = pd.get_dummies(test.iloc[:, txt_indexes_test])
+  test.drop(test.select_dtypes('object').columns, axis=1, inplace=True)
+  test = pd.concat([test, test_dummies], axis=1)
+  return test
+
+
+def align_encoded_train_test(train, test):
+    """Return encoded train and test dataframes with same columns (except target that is still in train).
+
+      Keyword arguments:
+      test -- the test dataframe
+      train -- the train dataframe
+      """
+    # Align the training and testing data, keep only columns present in both dataframes
+    target_col = train['TARGET']
+    train, test = train.align(test, join='inner', axis=1)
+    train = pd.concat([train, target_col], axis=1)
     return train, test
 
 
@@ -255,53 +282,6 @@ def standardize_test(test, num_cols_test):
     return test
 
 
-# + [markdown] id="To5vZ44roDjL"
-# ## Feature selection
-
-# + [markdown] id="E6PwqzS3L6fp"
-# ### Removing features with at least 50% Na values (percentage computed from train set)
-
-# + id="pDC6VeFGMAbZ"
-def select_features_on_na(train, test, na_cols_pctg_train):
-    """Return a tuple containing train and test dataframes without columns containing at least 50% Na values.
-
-  Keyword arguments:
-  train -- the train dataframe
-  test -- the test dataframe
-  na_cols_pctg_train -- a Series with the percentage of Na values per columns in train dataframe.
-  """
-    dropped_cols = na_cols_pctg_train[na_cols_pctg_train >= 0.5].axes[0].tolist()
-    train = train.drop(dropped_cols, axis=1)
-    test = test.drop(dropped_cols, axis=1)
-    return train, test
-
-
-# + [markdown] id="YocDxkHkQUZh"
-# ### Removing features with a modality that appears with a probability of at least 80%
-
-# + id="vYuZbotJQXsJ"
-def select_features_on_mod_proba(train, test):
-    """Return a tuple containing train and test dataframes
-  without columns containing modalities that appeared with a probability of at least 80%.
-
-  Keyword arguments:
-  train -- the train dataframe
-  test -- the test dataframe
-  """
-    PROBABILITY_THRESHOLD = 0.8
-    train_without_target = train.drop('TARGET', axis=1)
-    cols_train = train_without_target.columns.tolist()
-    cols_to_drop_train = []
-    for col in cols_train:
-        mods_pctg = train_without_target[col].value_counts() / train_without_target[col].value_counts().sum()
-        for pctg in mods_pctg:
-            if pctg >= PROBABILITY_THRESHOLD:
-                cols_to_drop_train.append(col)
-    train = train.drop(cols_to_drop_train, axis=1)
-    test = test.drop(cols_to_drop_train, axis=1)
-    return train, test
-
-
 # + [markdown] id="-ag0L1nB6UsZ"
 # ## Exporting preprocessed data to CSV files
 
@@ -331,10 +311,10 @@ def build_features():
     (test, num_cols_test) = impute_test_missing_data(test)
     na_cols_pctg_train = get_train_na_percentages(train)
     (train, test) = drop_textual_feat_na_rows(train, test)
-    (txt_indexes_train, txt_indexes_test) = get_textual_column_indexes(train, test)
-    (train, test) = label_encode_dataframes(train, test, txt_indexes_train, txt_indexes_test)
     train = standardize_train(train, num_cols_train)
     test = standardize_test(test, num_cols_test)
-    (train, test) = select_features_on_na(train, test, na_cols_pctg_train)
-    (train, test) = select_features_on_mod_proba(train, test)
+    (txt_indexes_train, txt_indexes_test) = get_textual_column_indexes(train, test)
+    train = one_hot_encode_train(train, txt_indexes_train)
+    test = one_hot_encode_test(test, txt_indexes_test)
+    train, test = align_encoded_train_test(train, test)
     export_dataframes_to_csv_files(train, test)
