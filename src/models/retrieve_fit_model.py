@@ -41,4 +41,4 @@ def get_model_tag(model):
     elif model == 'xgb':
         return 'XGBClassifier'
     else:
-        return 'RandomForest'
+        return 'RandomForestClassifier'
