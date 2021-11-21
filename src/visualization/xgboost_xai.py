@@ -46,9 +46,9 @@ def vizualize_single_line_xai(explainer, line, line_index, shap_values):
 
   Keyword arguments:
   explainer -- SHAP TreeExplainer obtained from fit XGBoost model
-  line -- single line in test dataset that will be used for prediction
-  line_index -- Test dataset line index
-  shap_values -- Computed SHAP values from XGBoost fit model
+  line -- Series containing single line in test dataset that will be used for prediction
+  line_index -- line index
+  shap_values -- Dataframe containing computed SHAP values from XGBoost fit model
   """
   shap.initjs()
-  shap.force_plot(explainer.expected_value[line_index], shap_values[line_index], line)
+  shap.force_plot(explainer.expected_value, shap_values[line_index], line)
