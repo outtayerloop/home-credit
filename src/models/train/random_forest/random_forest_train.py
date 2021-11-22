@@ -69,10 +69,10 @@ def train_random_forest_classifier(X_train, y_train):
   X_train -- ndarray containing all train columns except target column
   y_train -- ndarray target column values to train the model
   """
-  clf = RandomForestClassifier(class_weight='balanced', n_estimators=100, n_jobs=-1)
-  gs = GridSearchCV(clf, {"model__max_depth": [10, 15], "model__min_samples_split": [5, 10]}, n_jobs=-1, cv=5, scoring="accuracy")
-  gs.fit(X_train.values, y_train.values)
-  clf.set_params(**gs.best_params_)
+  clf = RandomForestClassifier(class_weight='balanced', n_estimators=100)
+  grid_search = GridSearchCV(clf, {'max_depth': [10, 15], 'min_samples_split': [5, 10]}, n_jobs=-1, cv=5, scoring='accuracy')
+  grid_search.fit(X_train.values, y_train.values)
+  clf.set_params(**grid_search.best_params_)
   clf = clf.fit(X_train, y_train)
   return clf
 
