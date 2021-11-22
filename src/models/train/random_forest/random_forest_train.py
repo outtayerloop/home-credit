@@ -142,7 +142,11 @@ def track_model_metrics(clf, X_test, y_test):
   mlflow.log_metric('accuracy', accuracy)
   mlflow.log_metric('f1_score', f_score)
   mlflow.log_metric('roc_auc_score', rf_roc_auc_score)
-  #mlflow.log_metric('conf_matrix', conf_matrix)
+  tn, fp, fn, tp = conf_matrix.ravel()
+  mlflow.log_metric('true_negatives', tn)
+  mlflow.log_metric('false_positives', fp)
+  mlflow.log_metric('false_negatives', fn)
+  mlflow.log_metric('true_positives', tp)
 
 
 # + pycharm={"name": "#%%\n"}
