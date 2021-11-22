@@ -14,8 +14,7 @@ def has_valid_args(args):
 
 def display_help():
     """Display a message indicating the command usage to run the prediction app entry point."""
-    print('Usage: poetry run python .\\app.predict.py -m \"MODEL\" -f CSV_FILE')
-    print('Try \'poetry run python .\\app.predict.py --help for help.\'')
+    print('Usage: poetry run python .\\app.predict.py -m [\"gb\", \"xgb\", \"rf\"] -f CSV_FILE')
 
 
 def has_wrongly_positioned_args(args):
@@ -46,7 +45,8 @@ def get_model_prediction():
     if has_valid_args(args):
         model = args[1]
         file_path = args[3]
-        pm.predict(model, file_path)
+        predictions = pm.get_predictions(model, file_path)
+        print(predictions[:11])
     else:
         display_help()
 

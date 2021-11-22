@@ -19,10 +19,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
 import logging
 import mlflow
 from urllib.parse import urlparse
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
 
 
 # -
@@ -66,7 +69,10 @@ def train_random_forest_classifier(X_train, y_train):
   X_train -- ndarray containing all train columns except target column
   y_train -- ndarray target column values to train the model
   """
-  clf = RandomForestClassifier(criterion='gini', n_estimators=300)
+  clf = RandomForestClassifier(class_weight='balanced', n_estimators=100)
+  grid_search = GridSearchCV(clf, {'max_depth': [10, 15], 'min_samples_split': [5, 10]}, n_jobs=-1, cv=5, scoring='accuracy')
+  grid_search.fit(X_train.values, y_train.values)
+  clf.set_params(**grid_search.best_params_)
   clf = clf.fit(X_train, y_train)
   return clf
 
@@ -77,7 +83,7 @@ def train_random_forest_classifier(X_train, y_train):
 
 # + pycharm={"name": "#%%\n"}
 def eval_metrics(actual, pred):
-  """Return a tuple containing model classification accuracy and confusion matrix.
+  """Return a tuple containing model classification accuracy, confusion matrix and f1_score.
 
   Keyword arguments:
   actual -- ndarray y_test containing true target values
@@ -85,12 +91,13 @@ def eval_metrics(actual, pred):
   """
   accuracy = accuracy_score(actual, pred)
   conf_matrix = confusion_matrix(actual, pred)
-  return accuracy, conf_matrix
+  f_score = f1_score(actual, pred)
+  return accuracy, conf_matrix, f_score
 
 
 # + pycharm={"name": "#%%\n"}
 def get_model_evaluation_metrics(clf, X_test, y_test):
-  """Return a tuple containing model classification accuracy and confusion matrix.
+  """Return a tuple containing model classification accuracy, confusion matrix, f1_score and ROC area under the curve score.
 
   Keyword arguments:
   clf -- classifier model
@@ -98,8 +105,11 @@ def get_model_evaluation_metrics(clf, X_test, y_test):
   y_test -- ndarray target column values to test the model
   """
   predicted_repayments = clf.predict(X_test)
-  (accuracy, conf_matrix) = eval_metrics(y_test, predicted_repayments)
-  return accuracy, conf_matrix
+  (accuracy, conf_matrix, f_score) = eval_metrics(y_test, predicted_repayments)
+  rf_probs = clf.predict_proba(X_test)
+  rf_probs = rf_probs[:, 0]  # keeping only the first class (repayment OK)
+  rf_roc_auc_score = roc_auc_score(y_test, rf_probs)
+  return accuracy, conf_matrix, f_score, rf_roc_auc_score
 
 
 # -
@@ -128,8 +138,10 @@ def track_model_metrics(clf, X_test, y_test):
   X_test -- ndarray containing all test columns except target column
   y_test -- ndarray target column values to test the model
   """
-  (accuracy, conf_matrix) = get_model_evaluation_metrics(clf, X_test, y_test)
+  (accuracy, conf_matrix, f_score, rf_roc_auc_score) = get_model_evaluation_metrics(clf, X_test, y_test)
   mlflow.log_metric('accuracy', accuracy)
+  mlflow.log_metric('f1_score', f_score)
+  mlflow.log_metric('roc_auc_score', rf_roc_auc_score)
   #mlflow.log_metric('conf_matrix', conf_matrix)
 
 
