@@ -20,6 +20,7 @@ import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
+from src.data import make_dataset as md
 
 
 # + [markdown] id="oYngGJuJABAl"
@@ -31,6 +32,7 @@ from sklearn.preprocessing import StandardScaler
 # + id="iFDLQubNVQtP"
 def get_dataframes():
     """Return a tuple containing train and test dataframes."""
+    md.retrieve_data()
     train = pd.read_csv('./data/external/application_train.csv')
     test = pd.read_csv('./data/external/application_test.csv')
     return train, test

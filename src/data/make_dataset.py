@@ -1,30 +1,30 @@
-# -*- coding: utf-8 -*-
-import click
-import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
+# ---
+# jupyter:
+#   jupytext:
+#     text_representation:
+#       extension: .py
+#       format_name: light
+#       format_version: '1.5'
+#       jupytext_version: 1.13.1
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# + [markdown] pycharm={"name": "#%% md\n"}
+# # Data retrieval from Kaggle API
+
+# + pycharm={"name": "#%%\n"}
+import subprocess
 
 
-@click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
-    """
-    logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
-
-
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
-
-    # not used in this stub but often useful for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
-
-    # find .env automagically by walking up directories until it's found, then
-    # load up the .env entries as environment variables
-    load_dotenv(find_dotenv())
-
-    main()
+# + pycharm={"name": "#%%\n"}
+# Works on Windows machines
+def retrieve_data():
+    """Remove contents from external data folder and download relevant Kaggle competition CSV files into it."""
+    subprocess.run(['powershell', '-Command', 'Remove-Item ./data/external/* -Recurse -Force'])
+    subprocess.run('kaggle competitions download -c home-credit-default-risk -p ./data/external/')
+    subprocess.run(['powershell', '-Command',
+                    'Expand-Archive ./data/external/home-credit-default-risk.zip -DestinationPath ./data/external/'])
+    subprocess.run(['powershell', '-Command', 'rm ./data/external/home-credit-default-risk.zip'])
