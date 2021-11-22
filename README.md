@@ -225,6 +225,7 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 
 - **XAI outputs** : we've decided not to output all lines explanations because it was too slow for our computers
 
+- **Writting documentation** : making build documentation generate errors sometimes, we've needed to delete before any build, the html folder to avoid it. Therefore, sphinx executes notebooks and raises many errors and display it in documentation html files.
 
 --------
 
