@@ -25,6 +25,7 @@ import logging
 import mlflow
 from urllib.parse import urlparse
 import xgboost as xgb
+from sklearn.model_selection import GridSearchCV
 
 
 # + [markdown] id="d1d6ca88"
@@ -32,14 +33,14 @@ import xgboost as xgb
 
 # + id="738f427f"
 def get_split_train_data():
-  """Return a tuple containing split train data into X_train X_test, y_train and y_test."""
-  df = pd.read_csv('../../../../data/processed/processed_application_train.csv')
-  train, test = train_test_split(df)
-  X_train = train.drop(['TARGET'], axis=1)
-  X_test = test.drop(['TARGET'], axis=1)
-  y_train = train[['TARGET']]
-  y_test = test[['TARGET']]
-  return X_train, X_test, y_train, y_test
+    """Return a tuple containing split train data into X_train X_test, y_train and y_test."""
+    df = pd.read_csv('../../../../data/processed/processed_application_train.csv')
+    train, test = train_test_split(df)
+    X_train = train.drop(['TARGET'], axis=1)
+    X_test = test.drop(['TARGET'], axis=1)
+    y_train = train[['TARGET']]
+    y_test = test[['TARGET']]
+    return X_train, X_test, y_train, y_test
 
 
 # + [markdown] id="931a8c69"
@@ -50,9 +51,9 @@ def get_split_train_data():
 
 # + id="ElavYC5wXOrF"
 def get_configured_logger():
-  """Return a logger for console outputs configured to print warnings."""
-  logging.basicConfig(level=logging.WARN)
-  return logging.getLogger(__name__)
+    """Return a logger for console outputs configured to print warnings."""
+    logging.basicConfig(level=logging.WARN)
+    return logging.getLogger(__name__)
 
 
 # + [markdown] id="hFmZgG_hXvgi"
@@ -66,7 +67,12 @@ def train_xgboost_classifier(X_train, y_train):
   X_train -- ndarray containing all train columns except target column
   y_train -- ndarray target column values to train the model
   """
-  clf = xgb.XGBClassifier(objective ='binary:logistic', colsample_bytree = 0.3, learning_rate = 0.1,max_depth = 5, alpha = 10, n_estimators = 10)
+  clf = xgb.XGBClassifier(scale_pos_weight=(1 - y_train.values.mean()), n_jobs=-1)
+  grid_search = GridSearchCV(clf,
+                    {'max_depth': [5, 10], 'min_child_weight': [5, 10], 'n_estimators': [25]},
+                    n_jobs=-1, cv=5, scoring='accuracy')
+  grid_search.fit(X_train.values, y_train.values)
+  clf.set_params(**grid_search.best_params_)
   clf = clf.fit(X_train, y_train)
   return clf
 
@@ -76,33 +82,33 @@ def train_xgboost_classifier(X_train, y_train):
 
 # + id="30ac1411"
 def eval_metrics(actual, pred):
-  """Return a tuple containing model classification accuracy, confusion matrix and f1_score.
+    """Return a tuple containing model classification accuracy, confusion matrix and f1_score.
 
   Keyword arguments:
   actual -- ndarray y_test containing true target values
   pred -- ndarray of the predicted target values by the model
   """
-  accuracy = accuracy_score(actual, pred)
-  conf_matrix = confusion_matrix(actual, pred)
-  f_score = f1_score(actual, pred)
-  return accuracy, conf_matrix, f_score
+    accuracy = accuracy_score(actual, pred)
+    conf_matrix = confusion_matrix(actual, pred)
+    f_score = f1_score(actual, pred)
+    return accuracy, conf_matrix, f_score
 
 
 # + id="xlD2NDs7Yl52"
 def get_model_evaluation_metrics(clf, X_test, y_test):
-  """Return a tuple containing model classification accuracy, confusion matrix, f1_score  and ROC area under the curve score..
+    """Return a tuple containing model classification accuracy, confusion matrix, f1_score  and ROC area under the curve score..
   
   Keyword arguments:
   clf -- classifier model
   X_test -- ndarray containing all test columns except target column
   y_test -- ndarray target column values to test the model
   """
-  predicted_repayments = clf.predict(X_test)
-  (accuracy, conf_matrix, f_score) = eval_metrics(y_test, predicted_repayments)
-  xgb_probs = clf.predict_proba(X_test)
-  xgb_probs = xgb_probs[:, 0]  # keeping only the first class (repayment OK)
-  xgb_roc_auc_score = roc_auc_score(y_test, xgb_probs)
-  return accuracy, conf_matrix, f_score, xgb_roc_auc_score
+    predicted_repayments = clf.predict(X_test)
+    (accuracy, conf_matrix, f_score) = eval_metrics(y_test, predicted_repayments)
+    xgb_probs = clf.predict_proba(X_test)
+    xgb_probs = xgb_probs[:, 0]  # keeping only the first class (repayment OK)
+    xgb_roc_auc_score = roc_auc_score(y_test, xgb_probs)
+    return accuracy, conf_matrix, f_score, xgb_roc_auc_score
 
 
 # + [markdown] id="xIhVvhSMcbRN"
@@ -110,65 +116,65 @@ def get_model_evaluation_metrics(clf, X_test, y_test):
 
 # + id="o82vjjLVb1NC"
 def track_model_params(clf):
-  """Log model params on MLFlow UI.
+    """Log model params on MLFlow UI.
 
   Keyword arguments:
   clf -- classifier model
   """
-  clf_params = clf.get_params()
-  for param in clf_params:
-      param_value = clf_params[param]
-      mlflow.log_param(param, param_value)
+    clf_params = clf.get_params()
+    for param in clf_params:
+        param_value = clf_params[param]
+        mlflow.log_param(param, param_value)
 
 
 # + id="bFudJAzUcjzI"
 def track_model_metrics(clf, X_test, y_test):
-  """Log model metrics on MLFlow UI.
+    """Log model metrics on MLFlow UI.
   
   Keyword arguments:
   clf -- classifier model
   X_test -- ndarray containing all test columns except target column
   y_test -- ndarray target column values to test the model
   """
-  (accuracy, conf_matrix, f_score, xgb_roc_auc_score) = get_model_evaluation_metrics(clf, X_test, y_test)
-  mlflow.log_metric('accuracy', accuracy)
-  mlflow.log_metric('f1_score', f_score)
-  mlflow.log_metric('roc_auc_score', xgb_roc_auc_score)
-  #mlflow.log_metric('conf_matrix', conf_matrix)
+    (accuracy, conf_matrix, f_score, xgb_roc_auc_score) = get_model_evaluation_metrics(clf, X_test, y_test)
+    mlflow.log_metric('accuracy', accuracy)
+    mlflow.log_metric('f1_score', f_score)
+    mlflow.log_metric('roc_auc_score', xgb_roc_auc_score)
+    # mlflow.log_metric('conf_matrix', conf_matrix)
 
 
 # + id="DpBgmHX9dXcv"
 def track_model_version(clf):
-  """Version model on MLFlow UI.
+    """Version model on MLFlow UI.
 
   Keyword arguments:
   clf -- classifier model
   """
-  tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-  if tracking_url_type_store != 'file':
-      mlflow.sklearn.log_model(clf, 'model', registered_model_name='XGBClassifier')
-  else:
-      mlflow.sklearn.log_model(clf, 'model')
+    tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+    if tracking_url_type_store != 'file':
+        mlflow.sklearn.log_model(clf, 'model', registered_model_name='XGBClassifier')
+    else:
+        mlflow.sklearn.log_model(clf, 'model')
 
 
 # + pycharm={"name": "#%%\n"} id="bNg-yhC7uSeS"
 def set_mlflow_run_tags():
-  """Set current MLFlow run tags."""
-  tags = {'model_name': 'XGBClassifier'}
-  mlflow.set_tags(tags)
+    """Set current MLFlow run tags."""
+    tags = {'model_name': 'XGBClassifier'}
+    mlflow.set_tags(tags)
 
 
 # + id="e862b8bd"
 def train_and_track_model_in_mlflow():
-  """Train model and track it with MLFLow"""
-  (X_train, X_test, y_train, y_test) = get_split_train_data()
-  logger = get_configured_logger()
-  clf = train_xgboost_classifier(X_train, y_train)
-  with mlflow.start_run():
-    track_model_params(clf)
-    track_model_metrics(clf, X_test, y_test)
-    track_model_version(clf)
-    set_mlflow_run_tags()
+    """Train model and track it with MLFLow"""
+    (X_train, X_test, y_train, y_test) = get_split_train_data()
+    logger = get_configured_logger()
+    clf = train_xgboost_classifier(X_train, y_train)
+    with mlflow.start_run():
+        track_model_params(clf)
+        track_model_metrics(clf, X_test, y_test)
+        track_model_version(clf)
+        set_mlflow_run_tags()
 
 
 # + pycharm={"name": "#%%\n"} colab={"base_uri": "https://localhost:8080/"} id="-e1kKCzVuSeT" outputId="66804a05-b021-43c8-db76-a249c2185edd"
