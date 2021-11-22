@@ -3,22 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-home-credit documentation!
+Welcome to home-credit documentation!
 ==============================================
-
-Contents:
 
 .. toctree::
    :maxdepth: 2
 
+   project_presentation
+   installation
    getting-started
-   commands
+   contributors
 
 
 
-Indices and tables
+Content
 ==================
+.. toctree::
+   :maxdepth: 2
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   files/notebooks/notebook
+   files/scripts/script
+   files/source/src
+
+
