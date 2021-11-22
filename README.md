@@ -175,6 +175,7 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 
     ![](reports/figures/mlflow_ui/mlflow_ui_gb_metrics.JPG)
 
+- In each notebook in ```./notebooks/train```, a ROC curve plot has been added.
 
 ### Model prediction
 
@@ -207,9 +208,19 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 
 ![](reports/figures/shap/subsampled_summary_plot.JPG)
 
+## Documentation
+
+- We've commented out the functions used in the scripts and in the notebooks using the Python docstring convention from PEP 257 (https://www.python.org/dev/peps/pep-0257/)
+
+- We've generated our project documentation using Sphinx, the files are available in the ```docs``` folder
+
+- Our ```README.md``` is presented as our project report
+
 --------
 
 ## Contributors
+
+&nbsp;
 
 **Wiem CHOUCHANE**
 
