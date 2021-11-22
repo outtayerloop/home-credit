@@ -216,6 +216,17 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 
 - Our ```README.md``` is presented as our project report
 
+## Difficulties
+
+- **Data pre-processing** : we've applied the minimum required pre-processing to both train and test CSV files that we've retrieved from Kaggle but as the classes were very unbalanced between both files, we did not have the time to find a solution to split them equally between the dataframes used to fit the models. Also, we did not have much experience regarding data processing as we're part of the apprentice group and we've only had an introduction to machine learning last year without insisting on data preparation. We also decided to remove our choices regarding feature selection because we found that they were not relevant regarding our problematic, so we ended up keeping all features and even adding some with one hot encoding
+
+- **Dependencies** : we had to ensure that the project could be run on another machine so we chose to add ```poetry``` as a dependency management tool, however, we've encountered problems installing some of the dependencies so we decided to also keep a ```requirements.txt``` file to save these dependencies and to be able to install them with pip instead in our virtual environment.
+
+- **Model train** : we did not have much experience so we've mainly tried to make the workflow functional but our models are clearly under-performing (as you can see on the ROC curve in each model train notebook with our model curve being under the no-skill model's curve). Unfortunately, we did not find a solution regarding this issue of bad metrics, even if the models have a global good accuracy, their F score and confusion matrix metrics are still bad without us being aware of a potential reason why it would behave so.
+
+- **XAI outputs** : we've decided not to output all lines explanations because it was too slow for our computers
+
+
 --------
 
 ## Contributors
