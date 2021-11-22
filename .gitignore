@@ -98,8 +98,8 @@ src/visualization/visualize.py
 src/visualization/__init__.py
 
 src/visualization/.gitkeep
+docs/html/*
 
 docs/html/
-*.doctree
 
 home-credit/docs/html/
