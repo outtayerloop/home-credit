@@ -1,4 +1,4 @@
-Application training and tracking models
+Application training
 ----------------------------------------
 
 To train and track models with MLFlow

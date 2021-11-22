@@ -1,4 +1,4 @@
-Application Predict models
+Application Prediction models
 ----------------------------------------
 
 Script for models prediction application launch

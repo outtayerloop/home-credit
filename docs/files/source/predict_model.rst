@@ -1,4 +1,4 @@
-Predicting models code
+Prediction models code
 ----------------------------------------
 
 .. toctree::

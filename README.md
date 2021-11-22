@@ -72,9 +72,8 @@ Home-credit is an application that aims to:
 *XGboost and Gradient boosting are one type of Boosting algorithm which is a supervised machine learning and consists of an ensemble learning technique that uses a set of Machine Learning algorithms to convert weak learner to strong learners in order to increase the accuracy of the model.*
 
 --------
+
 ## Installation
-
-
 ### Prerequisites :
 
 - **Python 3.9.X** (Programming language used in this application)

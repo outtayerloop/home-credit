@@ -1,13 +1,17 @@
 Contributors
-------------
+============
 
 
-Wiem **CHOUCHANE**
 
-Carine **TALENDIER**
+**Wiem CHOUCHANE**
 
-Brunelle **MALANDILA LEYA**
+**Carine TALANDIER**
 
+**Brunelle MALANDILA LEYA**
+
+**M2 APP LS1**
+
+**Big Data & Machine Learning**
 
 Git repository
 
