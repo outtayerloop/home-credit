@@ -100,3 +100,6 @@ src/visualization/__init__.py
 src/visualization/.gitkeep
 
 docs/html/
+*.doctree
+
+home-credit/docs/html/

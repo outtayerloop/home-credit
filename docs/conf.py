@@ -233,6 +233,7 @@ texinfo_documents = [
      u"cbw", 'home-credit',
      'applications of big data project', 'Miscellaneous'),
 ]
+nbsphinx_allow_errors = True
 
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []
