@@ -1,0 +1,956 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Model training application entry point &#8212; home-credit 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Model prediction application entry point" href="5.0-cbw-app-predict.html" />
+    <link rel="prev" title="App Notebooks" href="app.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="5.0-cbw-app-predict.html" title="Model prediction application entry point"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="app.html" title="App Notebooks"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">home-credit 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="notebook.html" >Notebooks files</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="app.html" accesskey="U">App Notebooks</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Model training application entry point</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Model-training-application-entry-point">
+<h1>Model training application entry point<a class="headerlink" href="#Model-training-application-entry-point" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+<section id="Pre-processing-both-train-and-test-CSVs-in-data/external-and-save-them-in-data/processed">
+<h2>Pre-processing both train and test CSVs in data/external and save them in data/processed<a class="headerlink" href="#Pre-processing-both-train-and-test-CSVs-in-data/external-and-save-them-in-data/processed" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">run</span> ../data/2.0-cbw-data-preprocessing.ipynb
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">processed_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../../data/processed/processed_application_train.csv&#39;</span><span class="p">)</span>
+<span class="n">processed_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../../data/processed/processed_application_test.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Display-pre-processed-train-and-test-CSVs-first-lines-(head)">
+<h2>Display pre-processed train and test CSVs first lines (head)<a class="headerlink" href="#Display-pre-processed-train-and-test-CSVs-first-lines-(head)" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">processed_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CNT_CHILDREN</th>
+      <th>AMT_INCOME_TOTAL</th>
+      <th>AMT_CREDIT</th>
+      <th>AMT_ANNUITY</th>
+      <th>AMT_GOODS_PRICE</th>
+      <th>REGION_POPULATION_RELATIVE</th>
+      <th>DAYS_BIRTH</th>
+      <th>DAYS_EMPLOYED</th>
+      <th>DAYS_REGISTRATION</th>
+      <th>DAYS_ID_PUBLISH</th>
+      <th>...</th>
+      <th>WALLSMATERIAL_MODE_Block</th>
+      <th>WALLSMATERIAL_MODE_Mixed</th>
+      <th>WALLSMATERIAL_MODE_Monolithic</th>
+      <th>WALLSMATERIAL_MODE_Others</th>
+      <th>WALLSMATERIAL_MODE_Panel</th>
+      <th>WALLSMATERIAL_MODE_Stone, brick</th>
+      <th>WALLSMATERIAL_MODE_Wooden</th>
+      <th>EMERGENCYSTATE_MODE_No</th>
+      <th>EMERGENCYSTATE_MODE_Yes</th>
+      <th>TARGET</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.112486</td>
+      <td>-0.545235</td>
+      <td>-0.275900</td>
+      <td>-0.569221</td>
+      <td>-0.253586</td>
+      <td>-9461</td>
+      <td>-637</td>
+      <td>0.359172</td>
+      <td>-2120</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>0.704502</td>
+      <td>1.526865</td>
+      <td>0.434724</td>
+      <td>1.412794</td>
+      <td>-1.210008</td>
+      <td>-16765</td>
+      <td>-1188</td>
+      <td>1.090039</td>
+      <td>-291</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.309825</td>
+      <td>0.650662</td>
+      <td>-0.000257</td>
+      <td>0.312947</td>
+      <td>-0.390782</td>
+      <td>-14086</td>
+      <td>-3028</td>
+      <td>1.251233</td>
+      <td>-4911</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>-0.005917</td>
+      <td>0.312391</td>
+      <td>0.246019</td>
+      <td>0.267120</td>
+      <td>-0.804813</td>
+      <td>-14583</td>
+      <td>-203</td>
+      <td>1.259545</td>
+      <td>-2056</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>-0.676868</td>
+      <td>-1.127208</td>
+      <td>-1.363063</td>
+      <td>-1.061861</td>
+      <td>1.464901</td>
+      <td>-17718</td>
+      <td>-7804</td>
+      <td>-1.155698</td>
+      <td>-1259</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 237 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">processed_test</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CNT_CHILDREN</th>
+      <th>AMT_INCOME_TOTAL</th>
+      <th>AMT_CREDIT</th>
+      <th>AMT_ANNUITY</th>
+      <th>AMT_GOODS_PRICE</th>
+      <th>REGION_POPULATION_RELATIVE</th>
+      <th>DAYS_BIRTH</th>
+      <th>DAYS_EMPLOYED</th>
+      <th>DAYS_REGISTRATION</th>
+      <th>DAYS_ID_PUBLISH</th>
+      <th>...</th>
+      <th>HOUSETYPE_MODE_terraced house</th>
+      <th>WALLSMATERIAL_MODE_Block</th>
+      <th>WALLSMATERIAL_MODE_Mixed</th>
+      <th>WALLSMATERIAL_MODE_Monolithic</th>
+      <th>WALLSMATERIAL_MODE_Others</th>
+      <th>WALLSMATERIAL_MODE_Panel</th>
+      <th>WALLSMATERIAL_MODE_Stone, brick</th>
+      <th>WALLSMATERIAL_MODE_Wooden</th>
+      <th>EMERGENCYSTATE_MODE_No</th>
+      <th>EMERGENCYSTATE_MODE_Yes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2</td>
+      <td>1.059309</td>
+      <td>2.562260</td>
+      <td>1.028660</td>
+      <td>2.935280</td>
+      <td>0.196341</td>
+      <td>-13976</td>
+      <td>-1866</td>
+      <td>0.830175</td>
+      <td>-4208</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>0.647693</td>
+      <td>1.007165</td>
+      <td>0.177099</td>
+      <td>0.841447</td>
+      <td>0.120865</td>
+      <td>-18604</td>
+      <td>-12009</td>
+      <td>-0.379934</td>
+      <td>-2027</td>
+      <td>...</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>-0.175538</td>
+      <td>-0.669483</td>
+      <td>-0.585425</td>
+      <td>-0.759719</td>
+      <td>0.575500</td>
+      <td>-13563</td>
+      <td>-1007</td>
+      <td>-0.263216</td>
+      <td>-4044</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.236077</td>
+      <td>-0.328294</td>
+      <td>-0.476987</td>
+      <td>-0.390220</td>
+      <td>0.120865</td>
+      <td>-10962</td>
+      <td>-1883</td>
+      <td>1.389072</td>
+      <td>-1721</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>-0.916446</td>
+      <td>-0.849631</td>
+      <td>-0.730010</td>
+      <td>-0.759719</td>
+      <td>-0.978692</td>
+      <td>-10507</td>
+      <td>-2780</td>
+      <td>-0.072997</td>
+      <td>-2729</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 236 columns</p>
+</div></div>
+</div>
+</section>
+<section id="Train-models-and-track-them-with-MLFlow">
+<h2>Train models and track them with MLFlow<a class="headerlink" href="#Train-models-and-track-them-with-MLFlow" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">train_models</span><span class="p">():</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">&#39;mlflow run ../../src/models/train/gradient_boosting&#39;</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">&#39;mlflow run ../../src/models/train/xgboost &#39;</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">&#39;mlflow run ../../src/models/train/random_forest&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">train_models</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Running-MLFow-UI-server-to-visualize-runs">
+<h2>Running MLFow UI server to visualize runs<a class="headerlink" href="#Running-MLFow-UI-server-to-visualize-runs" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s1">&#39;mlflow ui&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+ERROR:root:Internal Python error in the inspect module.
+Below is the traceback from this internal error.
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Traceback (most recent call last):
+  File &#34;c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\interactiveshell.py&#34;, line 3444, in run_code
+    exec(code_obj, self.user_global_ns, self.user_ns)
+  File &#34;C:\Users\wiemc\AppData\Local\Temp/ipykernel_6700/2412045222.py&#34;, line 1, in &lt;module&gt;
+    subprocess.run(&#39;mlflow ui&#39;)
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\subprocess.py&#34;, line 503, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\subprocess.py&#34;, line 1122, in communicate
+    self.wait()
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\subprocess.py&#34;, line 1185, in wait
+    return self._wait(timeout=timeout)
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\subprocess.py&#34;, line 1466, in _wait
+    result = _winapi.WaitForSingleObject(self._handle,
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File &#34;c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\interactiveshell.py&#34;, line 2064, in showtraceback
+    stb = value._render_traceback_()
+AttributeError: &#39;KeyboardInterrupt&#39; object has no attribute &#39;_render_traceback_&#39;
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File &#34;c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py&#34;, line 1101, in get_records
+    return _fixed_getinnerframes(etb, number_of_lines_of_context, tb_offset)
+  File &#34;c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py&#34;, line 248, in wrapped
+    return f(*args, **kwargs)
+  File &#34;c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py&#34;, line 281, in _fixed_getinnerframes
+    records = fix_frame_records_filenames(inspect.getinnerframes(etb, context))
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\inspect.py&#34;, line 1529, in getinnerframes
+    frameinfo = (tb.tb_frame,) + getframeinfo(tb, context)
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\inspect.py&#34;, line 1487, in getframeinfo
+    filename = getsourcefile(frame) or getfile(frame)
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\inspect.py&#34;, line 709, in getsourcefile
+    if getattr(getmodule(object, filename), &#39;__loader__&#39;, None) is not None:
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\inspect.py&#34;, line 755, in getmodule
+    os.path.realpath(f)] = module.__name__
+  File &#34;C:\Users\wiemc\AppData\Local\Programs\Python\Python39\lib\ntpath.py&#34;, line 664, in realpath
+    if _getfinalpathname(spath) == path:
+KeyboardInterrupt
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-intense-fg ansi-bold">---------------------------------------------------------------------------</span>
+<span class="ansi-red-intense-fg ansi-bold">KeyboardInterrupt</span>                         Traceback (most recent call last)
+    <span class="ansi-red-intense-fg ansi-bold">[... skipping hidden 1 frame]</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\AppData\Local\Temp/ipykernel_6700/2412045222.py</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">----&gt; 1</span><span class="ansi-yellow-intense-fg ansi-bold"> </span>subprocess<span class="ansi-yellow-intense-fg ansi-bold">.</span>run<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-blue-intense-fg ansi-bold">&#39;mlflow ui&#39;</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\AppData\Local\Programs\Python\Python39\lib\subprocess.py</span> in <span class="ansi-cyan-fg">run</span><span class="ansi-blue-intense-fg ansi-bold">(input, capture_output, timeout, check, *popenargs, **kwargs)</span>
+<span class="ansi-green-fg">    502</span>         <span class="ansi-green-intense-fg ansi-bold">try</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 503</span><span class="ansi-yellow-intense-fg ansi-bold">             </span>stdout<span class="ansi-yellow-intense-fg ansi-bold">,</span> stderr <span class="ansi-yellow-intense-fg ansi-bold">=</span> process<span class="ansi-yellow-intense-fg ansi-bold">.</span>communicate<span class="ansi-yellow-intense-fg ansi-bold">(</span>input<span class="ansi-yellow-intense-fg ansi-bold">,</span> timeout<span class="ansi-yellow-intense-fg ansi-bold">=</span>timeout<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">    504</span>         <span class="ansi-green-intense-fg ansi-bold">except</span> TimeoutExpired <span class="ansi-green-intense-fg ansi-bold">as</span> exc<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\AppData\Local\Programs\Python\Python39\lib\subprocess.py</span> in <span class="ansi-cyan-fg">communicate</span><span class="ansi-blue-intense-fg ansi-bold">(self, input, timeout)</span>
+<span class="ansi-green-fg">   1121</span>                 self<span class="ansi-yellow-intense-fg ansi-bold">.</span>stderr<span class="ansi-yellow-intense-fg ansi-bold">.</span>close<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1122</span><span class="ansi-yellow-intense-fg ansi-bold">             </span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>wait<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   1123</span>         <span class="ansi-green-intense-fg ansi-bold">else</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\AppData\Local\Programs\Python\Python39\lib\subprocess.py</span> in <span class="ansi-cyan-fg">wait</span><span class="ansi-blue-intense-fg ansi-bold">(self, timeout)</span>
+<span class="ansi-green-fg">   1184</span>         <span class="ansi-green-intense-fg ansi-bold">try</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1185</span><span class="ansi-yellow-intense-fg ansi-bold">             </span><span class="ansi-green-intense-fg ansi-bold">return</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>_wait<span class="ansi-yellow-intense-fg ansi-bold">(</span>timeout<span class="ansi-yellow-intense-fg ansi-bold">=</span>timeout<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   1186</span>         <span class="ansi-green-intense-fg ansi-bold">except</span> KeyboardInterrupt<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+
+<span class="ansi-green-intense-fg ansi-bold">~\AppData\Local\Programs\Python\Python39\lib\subprocess.py</span> in <span class="ansi-cyan-fg">_wait</span><span class="ansi-blue-intense-fg ansi-bold">(self, timeout)</span>
+<span class="ansi-green-fg">   1465</span>                 <span class="ansi-red-intense-fg ansi-bold"># API note: Returns immediately if timeout_millis == 0.</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1466</span><span class="ansi-yellow-intense-fg ansi-bold">                 result = _winapi.WaitForSingleObject(self._handle,
+</span><span class="ansi-green-fg">   1467</span>                                                      timeout_millis)
+
+<span class="ansi-red-intense-fg ansi-bold">KeyboardInterrupt</span>:
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-intense-fg ansi-bold">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\interactiveshell.py</span> in <span class="ansi-cyan-fg">showtraceback</span><span class="ansi-blue-intense-fg ansi-bold">(self, exc_tuple, filename, tb_offset, exception_only, running_compiled_code)</span>
+<span class="ansi-green-fg">   2063</span>                         <span class="ansi-red-intense-fg ansi-bold"># in the engines. This should return a list of strings.</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 2064</span><span class="ansi-yellow-intense-fg ansi-bold">                         </span>stb <span class="ansi-yellow-intense-fg ansi-bold">=</span> value<span class="ansi-yellow-intense-fg ansi-bold">.</span>_render_traceback_<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   2065</span>                     <span class="ansi-green-intense-fg ansi-bold">except</span> Exception<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+
+<span class="ansi-red-intense-fg ansi-bold">AttributeError</span>: &#39;KeyboardInterrupt&#39; object has no attribute &#39;_render_traceback_&#39;
+
+During handling of the above exception, another exception occurred:
+
+<span class="ansi-red-intense-fg ansi-bold">TypeError</span>                                 Traceback (most recent call last)
+    <span class="ansi-red-intense-fg ansi-bold">[... skipping hidden 1 frame]</span>
+
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\interactiveshell.py</span> in <span class="ansi-cyan-fg">showtraceback</span><span class="ansi-blue-intense-fg ansi-bold">(self, exc_tuple, filename, tb_offset, exception_only, running_compiled_code)</span>
+<span class="ansi-green-fg">   2064</span>                         stb <span class="ansi-yellow-intense-fg ansi-bold">=</span> value<span class="ansi-yellow-intense-fg ansi-bold">.</span>_render_traceback_<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   2065</span>                     <span class="ansi-green-intense-fg ansi-bold">except</span> Exception<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 2066</span><span class="ansi-yellow-intense-fg ansi-bold">                         stb = self.InteractiveTB.structured_traceback(etype,
+</span><span class="ansi-green-fg">   2067</span>                                             value, tb, tb_offset=tb_offset)
+<span class="ansi-green-fg">   2068</span>
+
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py</span> in <span class="ansi-cyan-fg">structured_traceback</span><span class="ansi-blue-intense-fg ansi-bold">(self, etype, value, tb, tb_offset, number_of_lines_of_context)</span>
+<span class="ansi-green-fg">   1365</span>         <span class="ansi-green-intense-fg ansi-bold">else</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-fg">   1366</span>             self<span class="ansi-yellow-intense-fg ansi-bold">.</span>tb <span class="ansi-yellow-intense-fg ansi-bold">=</span> tb
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1367</span><span class="ansi-yellow-intense-fg ansi-bold">         return FormattedTB.structured_traceback(
+</span><span class="ansi-green-fg">   1368</span>             self, etype, value, tb, tb_offset, number_of_lines_of_context)
+<span class="ansi-green-fg">   1369</span>
+
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py</span> in <span class="ansi-cyan-fg">structured_traceback</span><span class="ansi-blue-intense-fg ansi-bold">(self, etype, value, tb, tb_offset, number_of_lines_of_context)</span>
+<span class="ansi-green-fg">   1265</span>         <span class="ansi-green-intense-fg ansi-bold">if</span> mode <span class="ansi-green-intense-fg ansi-bold">in</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>verbose_modes<span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-fg">   1266</span>             <span class="ansi-red-intense-fg ansi-bold"># Verbose modes need a full traceback</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1267</span><span class="ansi-yellow-intense-fg ansi-bold">             return VerboseTB.structured_traceback(
+</span><span class="ansi-green-fg">   1268</span>                 self<span class="ansi-yellow-intense-fg ansi-bold">,</span> etype<span class="ansi-yellow-intense-fg ansi-bold">,</span> value<span class="ansi-yellow-intense-fg ansi-bold">,</span> tb<span class="ansi-yellow-intense-fg ansi-bold">,</span> tb_offset<span class="ansi-yellow-intense-fg ansi-bold">,</span> number_of_lines_of_context
+<span class="ansi-green-fg">   1269</span>             )
+
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py</span> in <span class="ansi-cyan-fg">structured_traceback</span><span class="ansi-blue-intense-fg ansi-bold">(self, etype, evalue, etb, tb_offset, number_of_lines_of_context)</span>
+<span class="ansi-green-fg">   1122</span>         <span class="ansi-blue-intense-fg ansi-bold">&#34;&#34;&#34;Return a nice text document describing the traceback.&#34;&#34;&#34;</span>
+<span class="ansi-green-fg">   1123</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1124</span><span class="ansi-yellow-intense-fg ansi-bold">         formatted_exception = self.format_exception_as_a_whole(etype, evalue, etb, number_of_lines_of_context,
+</span><span class="ansi-green-fg">   1125</span>                                                                tb_offset)
+<span class="ansi-green-fg">   1126</span>
+
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py</span> in <span class="ansi-cyan-fg">format_exception_as_a_whole</span><span class="ansi-blue-intense-fg ansi-bold">(self, etype, evalue, etb, number_of_lines_of_context, tb_offset)</span>
+<span class="ansi-green-fg">   1080</span>
+<span class="ansi-green-fg">   1081</span>
+<span class="ansi-green-intense-fg ansi-bold">-&gt; 1082</span><span class="ansi-yellow-intense-fg ansi-bold">         </span>last_unique<span class="ansi-yellow-intense-fg ansi-bold">,</span> recursion_repeat <span class="ansi-yellow-intense-fg ansi-bold">=</span> find_recursion<span class="ansi-yellow-intense-fg ansi-bold">(</span>orig_etype<span class="ansi-yellow-intense-fg ansi-bold">,</span> evalue<span class="ansi-yellow-intense-fg ansi-bold">,</span> records<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">   1083</span>
+<span class="ansi-green-fg">   1084</span>         frames <span class="ansi-yellow-intense-fg ansi-bold">=</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>format_records<span class="ansi-yellow-intense-fg ansi-bold">(</span>records<span class="ansi-yellow-intense-fg ansi-bold">,</span> last_unique<span class="ansi-yellow-intense-fg ansi-bold">,</span> recursion_repeat<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+
+<span class="ansi-green-intense-fg ansi-bold">c:\users\wiemc\documents\applications_of_big_data\home-credit\venv\lib\site-packages\IPython\core\ultratb.py</span> in <span class="ansi-cyan-fg">find_recursion</span><span class="ansi-blue-intense-fg ansi-bold">(etype, value, records)</span>
+<span class="ansi-green-fg">    380</span>     <span class="ansi-red-intense-fg ansi-bold"># first frame (from in to out) that looks different.</span>
+<span class="ansi-green-fg">    381</span>     <span class="ansi-green-intense-fg ansi-bold">if</span> <span class="ansi-green-intense-fg ansi-bold">not</span> is_recursion_error<span class="ansi-yellow-intense-fg ansi-bold">(</span>etype<span class="ansi-yellow-intense-fg ansi-bold">,</span> value<span class="ansi-yellow-intense-fg ansi-bold">,</span> records<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 382</span><span class="ansi-yellow-intense-fg ansi-bold">         </span><span class="ansi-green-intense-fg ansi-bold">return</span> len<span class="ansi-yellow-intense-fg ansi-bold">(</span>records<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> <span class="ansi-cyan-intense-fg ansi-bold">0</span>
+<span class="ansi-green-fg">    383</span>
+<span class="ansi-green-fg">    384</span>     <span class="ansi-red-intense-fg ansi-bold"># Select filename, lineno, func_name to track frames with</span>
+
+<span class="ansi-red-intense-fg ansi-bold">TypeError</span>: object of type &#39;NoneType&#39; has no len()
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Model training application entry point</a><ul>
+<li><a class="reference internal" href="#Pre-processing-both-train-and-test-CSVs-in-data/external-and-save-them-in-data/processed">Pre-processing both train and test CSVs in data/external and save them in data/processed</a></li>
+<li><a class="reference internal" href="#Display-pre-processed-train-and-test-CSVs-first-lines-(head)">Display pre-processed train and test CSVs first lines (head)</a></li>
+<li><a class="reference internal" href="#Train-models-and-track-them-with-MLFlow">Train models and track them with MLFlow</a></li>
+<li><a class="reference internal" href="#Running-MLFow-UI-server-to-visualize-runs">Running MLFow UI server to visualize runs</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="app.html"
+                        title="previous chapter">App Notebooks</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="5.0-cbw-app-predict.html"
+                        title="next chapter">Model prediction application entry point</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/files/notebooks/4.0-cbw-app-train.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="5.0-cbw-app-predict.html" title="Model prediction application entry point"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="app.html" title="App Notebooks"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">home-credit 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="notebook.html" >Notebooks files</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="app.html" >App Notebooks</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Model training application entry point</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright .
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
+    </div>
+  </body>
+</html>
