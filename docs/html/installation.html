@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Installation &#8212; home-credit 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting-started.html" />
+    <link rel="prev" title="Project presentation" href="project_presentation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getting-started.html" title="Getting started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="project_presentation.html" title="Project presentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">home-credit 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<dl>
+<dt>Prerequisites:</dt><dd><ul class="simple">
+<li><p><strong>Python 3.9.X</strong> (Programming language used in this application)</p></li>
+<li><p><strong>Poetry</strong> (Python package manager), which can be installed with the following command :</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">`shell</span>
+<span class="pre">(Invoke-WebRequest</span> <span class="pre">-Uri</span> <span class="pre">https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py</span> <span class="pre">-UseBasicParsing).Content</span> <span class="pre">|</span> <span class="pre">python</span> <span class="pre">-</span>
+<span class="pre">`</span></code></p>
+<ul class="simple">
+<li><p><strong>Anaconda3 or Miniconda</strong> : with conda CLI enabled (add conda executable to path environement variable)</p></li>
+<li><p><strong>Pip (Python Package installer)</strong> : after downloading get-pip.py move to the folder where get-pip.py is and run: <code class="docutils literal notranslate"><span class="pre">`python</span> <span class="pre">get-pip.py`</span></code>. Pip normally comes packaged with Anaconda</p></li>
+<li><p><strong>cmake cli utility</strong> : required by the shap library package, else shap installation fails</p></li>
+<li><p><strong>Compiler for llvm</strong> : llvm is also used by shap, and requires a compiler, be it g++ for Linux or Microsoft Visual Studio C++ Redistributable packages x86 and x64 (<a class="reference external" href="https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170">https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170</a>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Installation step</p>
+<ol class="arabic simple">
+<li><p>Clone the following project repository: <a class="reference external" href="https://github.com/wiwiii/home-credit">https://github.com/wiwiii/home-credit</a></p></li>
+<li><dl class="simple">
+<dt>Install global dependencies</dt><dd><ul class="simple">
+<li><p>From top-level directory folder (home-credit) type: <code class="docutils literal notranslate"><span class="pre">`pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt`</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Install application dependencies</dt><dd><ul class="simple">
+<li><p>From top-level directory folder (home-credit) type: <code class="docutils literal notranslate"><span class="pre">`poetry</span> <span class="pre">install`</span></code>, this command will install the dependencies listed in the file <code class="docutils literal notranslate"><span class="pre">`pyproject.toml`</span></code> and automatically write the poetry.lock file.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="project_presentation.html"
+                        title="previous chapter">Project presentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting-started.html"
+                        title="next chapter">Getting started</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getting-started.html" title="Getting started"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="project_presentation.html" title="Project presentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">home-credit 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright .
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
+    </div>
+  </body>
+</html>
