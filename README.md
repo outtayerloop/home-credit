@@ -199,6 +199,10 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 
 ![](reports/figures/shap/shap_values.JPG)
 
+- **Vizualizing explanations for a single line in test dataset** :
+
+![](reports/figures/shap/single_line_force_plot.JPG)
+
 - **Vizualizing explanations for all lines in test dataset at once (subsample at 1000 lines for performance concerns)** :
 
 ![](reports/figures/shap/subsampled_lines_force_plot.JPG)
