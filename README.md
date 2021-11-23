@@ -50,6 +50,36 @@ Applications of big data project around the **"Home Credit Default Risk" Kaggle 
     │       └── visualize.py
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+
+
+- **notebooks folder** :
+
+  - **app folder** :
+    - ```4.0-cbw-app-train.ipynb``` : notebook version of ```app_train.py``` which calls the data preprocessing notebook (```2.0-cbw-data-preprocessing.ipynb```) and proceeds to call each MLproject for each model through the ```mlflow run``` command line utility and then launches the MLFlow UI server with ```mlflow ui```
+    - ```5.0-cbw-app-predict.ipynb``` : notebook version of ```app_predict.py``` which allows the user to choose a model between the available tags ("rf" for Random Forest, "gb" for Gradient Boosting and "xgb" for XGBoost), this notebook calls the script ```predict_model.py``` to get the prediction results
+    - ```6.0-cbw-xgboost-xai.ipynb``` : for SHAP outputs vizualization (SHAP values explanations and summary plot)
+  - **data folder** :
+    - ```1.0-data-retrieval.ipynb``` : allows retrieving raw CSV files from the Kaggle API and puts them in the ```data/external``` folder
+    - ```2.0-cbw-data-preprocessing.ipynb``` : notebook version of ```build_features.py``` which calls the previous notebook to retrieve the datasets and then proceeds to process the retrieved data and saves it in the ```data/processed folder```
+  - **train folder** :
+    - ```3.0-cbw-gradient-boosting-train.ipynb``` : notebook which retrieves the processed data from ```data/processed``` and proceeds to train the Gradient Boosting model and log its parameters and metrics to vizualize them in MLFlow UI. It also provides a ROC curve plot
+    - ```3.0-cbw-random-forest-train.ipynb``` : notebook which retrieves the processed data from ```data/processed``` and proceeds to train the Random Forest model and log its parameters and metrics to vizualize them in MLFlow UI. It also provides a ROC curve plot
+    - ```3.0-cbw-gradient-xgboost.ipynb``` : notebook which retrieves the processed data from ```data/processed``` and proceeds to train the XGBoost model and log its parameters and metrics to vizualize them in MLFlow UI. It also provides a ROC curve plot
+  - **reports folder** : contains the images used in this README.md
+  - **src folder** :
+    - **data folder** :
+      - ```make_dataset.py``` : python script version of the ```1.0-data-retrieval.ipynb``` notebook
+    - **features folder** :
+      - ```build_features.py```  :python script version of the ```2.0-cbw-data-preprocessing.ipynb``` without the ROC curve plot
+    - **models folder** :
+      - **train/gradient_boosting folder** : MLproject convention for running the ```gradient_boosting_train.py``` script with MLFlow tracking in a conda environment
+      - **train/random_forest folder** : MLproject convention for running the ```random_forest_train.py``` script with MLFlow tracking in a conda environment
+      - **train/xgboost folder** : MLproject convention for running the ```xgboost_train.py``` script with MLFlow tracking in a conda environment
+      - ```predict_model.py``` : calls the ```retrieve_fit_model.py``` script to get the latest trained chosen model with the max precision score from MLFlow then returns the predictions on the provided input values
+      - ```retrieve_fit_model.py``` : returns the latest trained chosen model with the max precision score from MLFlow
+  - ```app_predict.py``` : python script version of the ```5.0-cbw-app-predict.ipynb``` notebook
+  - ```app_train.py``` : python script version of the ```4.0-cbw-app-train.ipynb``` notebook
+  - ```poetry.lock``` and ```pyproject.toml``` : Poetry dependency manager files
 --------
 ## Project presentation
 
@@ -57,7 +87,7 @@ Home-credit is an application that aims to:
 
 - Train and validate 3 Machine learning models (XGboost, Random Forest, Gradient Boosting) to classify home credit repayment ability of different individuals, following these basic steps :
   - **Data preparation**: collect and clean data, which is split into 2 CSV files, ```application_train.csv``` and ```application_test.csv```
-  - **Model fit and validation** : using metrics such as accuracy score, F score, ROC Curve and confusion matrix 
+  - **Model fit and validation** : using metrics such as accuracy score, F score, precision score, ROC Curve and confusion matrix 
   - **Class prediction** : 0 or 1 (0 = repayed correctly, 1 = not repayed)
 
 - Provide client repayment abilities prediction, by selecting one of the 3 Machine Learning models trained before
@@ -121,7 +151,7 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 ### Data collection and data preparation
 
 
-- We've automated the data collection (works on Windows machines only currently, can be extended to Linux and OSX in further versions) using the **Kaggle API CLI tool** (https://github.com/Kaggle/kaggle-api). As a result, calling the ```app_predict.py``` or the ```4.0-cbw-app-train.ipynb``` entry points results in downloading the zipped competition dataset, unzipping it and putting the CSV files in ```./data/external``` and then removing the .zip folder.
+- We've automated the data collection (works on Windows machines only currently, can be extended to Linux and OSX in further versions) using the **Kaggle API CLI tool** (https://github.com/Kaggle/kaggle-api) in the ```./notebooks/data/1.0-cbw-data-retrieval.ipynb``` and in the python script ```./src/data/make_datasets.py```. As a result, calling the ```app_predict.py``` or the ```4.0-cbw-app-train.ipynb``` entry points results in downloading the zipped competition dataset, unzipping it and putting the CSV files in ```./data/external``` and then removing the .zip folder.
 
 - We've only used the ```application_train.csv``` and ```application_test.csv``` files in this project
 
@@ -151,7 +181,7 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
   - Split processed data into train and test
   - Instanciate the model class with generic parameters.
   - **Remark** : as we didn't have much time and experience, we've used the parameters provided in the XAI lab, as well as the GridSearch technique from the same lab to set their parameters, except for the Gradient Boosting classifier model.
-  - Start MLFlow run : track model parameters, track model metrics (accuracy, F score, ROC curve, confusion matrix), track model version, set model tag for subsequent retrieval with mlflow.sklearn.load_model for the prediction app entry point (tags are "gb" for Gradient Boosting, "xgb" for XGBoost and "rf" for Random Forest)
+  - Start MLFlow run : track model parameters, track model metrics (accuracy, F score, precision score, ROC curve, confusion matrix), track model version, set model tag for subsequent retrieval with mlflow.sklearn.load_model for the prediction app entry point (tags are "gb" for Gradient Boosting, "xgb" for XGBoost and "rf" for Random Forest)
   - In the MLFlow UI, we can vizualize the results of the tracking with ```mlflow ui``` :
   
   ![](reports/figures/mlflow_ui/mlflow_ui_home.JPG)
@@ -178,7 +208,7 @@ We've followed the cookie cutter structure provided here : https://drivendata.gi
 
 ### Model prediction
 
-**Remark** : for performance concerns, we will not run predictions on the whole dataset though it would be practically the same code. Also, for prediction, we retrieve the latest run associated with the chosen model and take the one with the max accuracy.
+**Remark** : for performance concerns, we will not run predictions on the whole dataset though it would be practically the same code. Also, for prediction, we retrieve the latest run associated with the chosen model and take the one with the max precision.
 
 - **Random Forest** :
 
